@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="41f98547-d648-4963-ba4d-b729ce86855c" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectId" id="24mxOYpx6oWGkz9NMqzLB98uh3z" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/update_summit_info/summit_report.py" />
+  </component>
+  <component name="RunManager" selected="Python.lambda_function (1)">
+    <configuration name="lambda_function (1)" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="WeatherInfoBot" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/update_summit_info" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/update_summit_info/lambda_function.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="lambda_function" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="WeatherInfoBot" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/update_weather_info" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/update_weather_info/lambda_function.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="sns_example" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="WeatherInfoBot" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/sns_example.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.lambda_function (1)" />
+        <item itemvalue="Python.lambda_function" />
+        <item itemvalue="Python.sns_example" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="41f98547-d648-4963-ba4d-b729ce86855c" name="Default Changelist" comment="" />
+      <created>1644249531998</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1644249531998</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="539" y="302" key="#com.jetbrains.python.refactoring.move.PyMoveModuleMembersDialog" timestamp="1644504372055">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="539" y="302" key="#com.jetbrains.python.refactoring.move.PyMoveModuleMembersDialog/0.0.1536.824@0.0.1536.824" timestamp="1644504372055" />
+    <state x="549" y="167" key="FileChooserDialogImpl" timestamp="1644504371328">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="549" y="167" key="FileChooserDialogImpl/0.0.1536.824@0.0.1536.824" timestamp="1644504371328" />
+    <state width="1515" height="152" key="GridCell.Tab.0.bottom" timestamp="1644504079920">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1515" height="152" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1644504079920" />
+    <state width="1515" height="152" key="GridCell.Tab.0.center" timestamp="1644504079920">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1515" height="152" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1644504079920" />
+    <state width="1515" height="152" key="GridCell.Tab.0.left" timestamp="1644504079920">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1515" height="152" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1644504079920" />
+    <state width="1515" height="152" key="GridCell.Tab.0.right" timestamp="1644504079920">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1515" height="152" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1644504079920" />
+    <state x="849" y="236" key="com.intellij.ide.util.TipDialog" timestamp="1644408132829">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="849" y="236" key="com.intellij.ide.util.TipDialog/0.0.1536.824@0.0.1536.824" timestamp="1644408132829" />
+  </component>
+</project>
