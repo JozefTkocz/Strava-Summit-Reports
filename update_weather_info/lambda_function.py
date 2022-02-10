@@ -105,10 +105,9 @@ def lambda_handler(event, context):
         summits = get_candidate_summits_from_local_maxima(route_data)
 
         # Load the hills database
-        hills_database = pd.read_csv('./DoBIH_v17_3.csv', index_col=0)
-        db = hills_database[['Name', 'Latitude', 'Longitude', 'Metres', 'Classification'] + CLASSIFICATION_COLUMNS]
+        hills_database = pd.read_parquet('hills_database.parquet.gzip')
 
-        summits_to_report = filter_visited_summits(db, summits)
+        summits_to_report = filter_visited_summits(hills_database, summits)
         reported_classifications = get_report_summit_classifications(summits_to_report)
         visited_summits_report = generate_visited_summit_report(reported_classifications, summits_to_report)
     except Exception as e:
