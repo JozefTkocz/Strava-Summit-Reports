@@ -1,13 +1,20 @@
 import datetime as dt
 import os
+from typing import Union
 import json
 
+import numpy as np
 import pandas as pd
 import pytz
 from stravaclient import DynamoDBCache, StravaClient, OAuthHandler
 from stravaclient.models.activity import UpdatableActivity
 from tzwhere import tzwhere
 from weatherapi.endpoint_methods import get_weather_history
+from weatherapi.web_api.interface import APINotCalledException
+
+from update_weather_info.hill_classification import get_report_summit_classifications, CLASSIFICATION_COLUMNS
+from update_weather_info.hill_location import get_candidate_summits_from_local_maxima, filter_visited_summits
+from update_weather_info.summit_report import generate_visited_summit_report
 
 
 def lambda_handler(event, context):
@@ -64,31 +71,96 @@ def lambda_handler(event, context):
     print(f'End time local: {end_time_local}')
 
     print(f'Retrieving weather data for {start_time_local}')
-    weather_df = get_weather_history(api_key=weather_api_key,
-                                     latitude=start_lat,
-                                     longitude=start_lng,
-                                     start_time=start_time_local,
-                                     end_time=end_time_local)
-    print(weather_df)
+    try:
+        weather_df = get_weather_history(api_key=weather_api_key,
+                                         latitude=start_lat,
+                                         longitude=start_lng,
+                                         start_time=start_time_local,
+                                         end_time=end_time_local)
+    except APINotCalledException as e:
+        print('Unable to call weather API')
+        print(e)
+        weather_df = None
 
-    # Construct weather summary message
-    weather_summary_message = construct_weather_summary_string(weather_df, start_time_local, end_time_local)
+    if weather_df is not None:
+        weather_summary_message = construct_weather_summary_string(weather_df, start_time_local, end_time_local)
+    else:
+        weather_summary_message = None
+
     print('Generated summary message:')
     print(weather_summary_message)
 
-    # Generate visited summit report
+    print(f'Requesting route stream data for activity {activity_id}')
+    try:
+        required_stream_columns = ['latlng', 'time', 'altitude']
+        route_stream_json = strava_client.get_activity_stream_set(athlete_id=athlete_id,
+                                                                  activity_id=activity_id,
+                                                                  streams=required_stream_columns)
+
+        for c in required_stream_columns:
+            if c not in route_stream_json.keys():
+                raise KeyError(f'Column {c} not available in datastream')
+
+        route_data = parse_streams_dataframe(route_stream_json)
+        summits = get_candidate_summits_from_local_maxima(route_data)
+
+        # Load the hills database
+        hills_database = pd.read_csv('./DoBIH_v17_3.csv', index_col=0)
+        db = hills_database[['Name', 'Latitude', 'Longitude', 'Metres', 'Classification'] + CLASSIFICATION_COLUMNS]
+
+        summits_to_report = filter_visited_summits(db, summits)
+        reported_classifications = get_report_summit_classifications(summits_to_report)
+        visited_summits_report = generate_visited_summit_report(reported_classifications, summits_to_report)
+    except Exception as e:
+        print('Unable to generate visited summit report:')
+        print(e)
+        visited_summits_report = None
+
+    print('Generated summit report:')
+    print(visited_summits_report)
+
+    strava_report = generate_strava_activity_report(weather_report=weather_summary_message,
+                                                    summit_report=visited_summits_report)
 
     # Request update to strava activity
-    print('Editing activity...')
-    new_activity = UpdatableActivity.from_activity(activity_info)
-    new_activity.description = weather_summary_message
-    strava_client.update_activity(athlete_id=athlete_id,
-                                  activity_id=activity_id,
-                                  updatable_activity=new_activity)
+    if strava_report is not None:
+        print('Editing activity with report: ')
+        print(strava_report)
+        new_activity = UpdatableActivity.from_activity(activity_info)
+        print(new_activity.hide_from_home)
+        new_activity.description = strava_report
+        new_activity.hide_from_home = False
 
-    # Return
+        print(new_activity.to_json())
+
+        update = strava_client.update_activity(athlete_id=athlete_id,
+                                               activity_id=activity_id,
+                                               updatable_activity=new_activity)
+        print(update)
+    else:
+        print('No data to report. Exiting...')
+
     print('Executed successfully')
     return {'statusCode': 200}
+
+
+def generate_strava_activity_report(weather_report: Union[str, None],
+                                    summit_report: Union[str, None]) -> Union[str, None]:
+    report = ''
+    if summit_report is not None:
+        report = summit_report
+
+    if len(report) and (weather_report is not None):
+        print('Adding newlines...')
+        report += '\n\n'
+
+    if weather_report is not None:
+        report += weather_report
+
+    if len(report):
+        return report
+    else:
+        return None
 
 
 def construct_weather_summary_string(df, start_time, end_time):
@@ -103,7 +175,7 @@ def construct_weather_summary_string(df, start_time, end_time):
     windspeed = data['wind_mph'].mean()
     gust = data['gust_mph'].max()
 
-    summary = (f"Condition: {condition}\n"
+    summary = (f"Weather: {condition}\n"
                f"Temperature: {temperature:.1f} {degree_symbol}C (feels like {feels_like:.1f} {degree_symbol}C)\n"
                f"Wind (mph): {windspeed:.1f}, gusting {gust:.1f}")
 
@@ -118,3 +190,19 @@ def get_timezone_at_location(latitude, longutude):
 
 def convert_utc_to_timezone_at_location(timestamp_utc, target_timezone):
     return timestamp_utc.astimezone(target_timezone)
+
+
+def parse_streams_dataframe(streams_json):
+    lat = np.array(streams_json['latlng']['data'])[:, 0]
+    lng = np.array(streams_json['latlng']['data'])[:, 1]
+    columns = streams_json.keys()
+    df = pd.DataFrame()
+    for col in columns:
+        df[col] = streams_json[col]['data']
+    df['lat'] = lat
+    df['lng'] = lng
+    return df
+
+
+if __name__ == '__main__':
+    result = lambda_handler('a', 'b')
