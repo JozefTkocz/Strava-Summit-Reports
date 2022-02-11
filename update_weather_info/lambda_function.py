@@ -3,6 +3,7 @@ import os
 from typing import Union
 import json
 
+
 import numpy as np
 import pandas as pd
 import pytz
@@ -12,9 +13,9 @@ from tzwhere import tzwhere
 from weatherapi.endpoint_methods import get_weather_history
 from weatherapi.web_api.interface import APINotCalledException
 
-from update_weather_info.hill_classification import get_report_summit_classifications, CLASSIFICATION_COLUMNS
-from update_weather_info.hill_location import get_candidate_summits_from_local_maxima, filter_visited_summits
-from update_weather_info.summit_report import generate_visited_summit_report
+from .hill_classification import get_report_summit_classifications, CLASSIFICATION_COLUMNS
+from .hill_location import get_candidate_summits_from_local_maxima, filter_visited_summits
+from .summit_report import generate_visited_summit_report
 
 
 def lambda_handler(event, context):
@@ -102,10 +103,12 @@ def lambda_handler(event, context):
                 raise KeyError(f'Column {c} not available in datastream')
 
         route_data = parse_streams_dataframe(route_stream_json)
+        # if scipy is available, the computation can be sped up using the following
+        # The 250 mb limit on dependencies in aws makes this difficult, so bypass this step, and brute-force it instead.
         summits = get_candidate_summits_from_local_maxima(route_data)
-
         # Load the hills database
-        hills_database = pd.read_parquet('hills_database.parquet.gzip')
+        # hills_database = pd.read_parquet('database.parquet.gzip')
+        hills_database = pd.read_pickle('database.pkl')
 
         summits_to_report = filter_visited_summits(hills_database, summits)
         reported_classifications = get_report_summit_classifications(summits_to_report)

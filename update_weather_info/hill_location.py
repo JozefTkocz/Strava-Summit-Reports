@@ -2,7 +2,8 @@ from typing import Union
 
 import numpy as np
 import pandas as pd
-from scipy import signal
+# from scipy import signal
+from .peak_finder import detect_peaks
 
 
 def haversine_distance(lon1: Union[np.array, float],
@@ -40,18 +41,21 @@ def find_nearest_summits(local_maxima: pd.DataFrame, hills_df: pd.DataFrame) -> 
     return distances, minimum_indices
 
 
-def low_pass_filter(time, stream):
+"""def low_pass_filter(time, stream):
     # Low-pass filter the altitude profile
     fs = 1. / time.diff().mode()  # Sampling frequency Hz
     fc = 0.01  # Cut-off frequency of the filter
     w = fc / (fs / 2.)  # Normalize the frequency
     b, a = signal.butter(5, w, 'low')
-    return signal.filtfilt(b, a, stream)
+    return signal.filtfilt(b, a, stream)"""
 
 
 def get_candidate_summits_from_local_maxima(route_data):
-    route_data['alt_filtered'] = low_pass_filter(route_data['time'], route_data['altitude'])
-    maxima, properties = signal.find_peaks(route_data['alt_filtered'].values)
+    # do not low pass filter without scipy
+    # route_data['alt_filtered'] = low_pass_filter(route_data['time'], route_data['altitude'])
+    # do not use scipys peak finding algorithm without scipy
+    # maxima, properties = signal.find_peaks(route_data['alt_filtered'].values)
+    maxima = detect_peaks(route_data['altitude'], mpd=10)
     route_data['max'] = False
     route_data.loc[maxima, 'max'] = True
     summits = route_data.loc[route_data['max']]
