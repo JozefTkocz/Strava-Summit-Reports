@@ -3,7 +3,7 @@ from typing import Union
 import numpy as np
 import pandas as pd
 # from scipy import signal
-from .peak_finder import detect_peaks
+from peak_finder import detect_peaks
 
 
 def haversine_distance(lon1: Union[np.array, float],
