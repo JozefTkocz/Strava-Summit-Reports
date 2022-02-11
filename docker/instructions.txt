@@ -1,0 +1,27 @@
+1. build the docker image:
+docker build -t awslayerdocker .
+
+2. run the docker image:
+docker run -it awslayerdocker bash
+
+3. navigate to the installed python packages:
+cd ..
+cd ./layer_dir
+
+4. create a .zip file:
+zip -r docker_layer.zip .
+
+5. Copy .zip file onto host machine. 
+	- Identify running condainer ID:
+		docker container ls
+
+	- Navigate to directory with Dockerfile on host machine, open command prompt and type:
+		docker cp <container ID>:/layer_dir/docker_layer.zip ./
+
+6. Optionally, unzip the created file, remove code already included in AWS (e.g. boto3, botocore). 
+
+7. Upload to Amazon S3 storage
+
+8. Congiure Lambda layer from S3 URI
+
+
