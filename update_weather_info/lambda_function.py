@@ -13,9 +13,9 @@ from tzwhere import tzwhere
 from weatherapi.endpoint_methods import get_weather_history
 from weatherapi.web_api.interface import APINotCalledException
 
-from hill_classification import get_report_summit_classifications
-from hill_location import get_candidate_summits_from_local_maxima, filter_visited_summits
-from summit_report import generate_visited_summit_report
+from .hill_classification import get_report_summit_classifications
+from .hill_location import get_candidate_summits_from_local_maxima, filter_visited_summits
+from .summit_report import generate_visited_summit_report
 
 
 def lambda_handler(event, context):
@@ -105,7 +105,10 @@ def lambda_handler(event, context):
         route_data = parse_streams_dataframe(route_stream_json)
         # if scipy is available, the computation can be sped up using the following
         # The 250 mb limit on dependencies in aws makes this difficult, so bypass this step, and brute-force it instead.
-        summits = get_candidate_summits_from_local_maxima(route_data)
+        # summits = get_candidate_summits_from_local_maxima(route_data)
+
+        # In absence of a good peak finding algorithm, use all available GPS points
+        summits = route_data
         # Load the hills database
         # hills_database = pd.read_parquet('database.parquet.gzip')
         hills_database = pd.read_pickle('database.pkl')
