@@ -2,6 +2,7 @@ from typing import Union
 
 import numpy as np
 import pandas as pd
+
 # from scipy import signal
 from peak_finder import detect_peaks
 
@@ -55,6 +56,7 @@ def get_candidate_summits_from_local_maxima(route_data):
     # route_data['alt_filtered'] = low_pass_filter(route_data['time'], route_data['altitude'])
     # do not use scipys peak finding algorithm without scipy
     # maxima, properties = signal.find_peaks(route_data['alt_filtered'].values)
+    # This doesn't work well enough -not recommended to use
     maxima = detect_peaks(route_data['altitude'], mpd=10)
     route_data['max'] = False
     route_data.loc[maxima, 'max'] = True
@@ -62,14 +64,32 @@ def get_candidate_summits_from_local_maxima(route_data):
     return summits
 
 
-def filter_visited_summits(db, peaks):
+def filter_visited_summits(db, peaks, distance_proximity=20):
     candidate_hills = get_hills_within_altitude_profile(db, peaks)
+    candidate_hills = get_hills_within_latlng_grid(peaks=peaks, candidate_hills=candidate_hills, threshold_deg=0.1)
     nearest_hill_distance, nearest_hill_index = find_nearest_summits(peaks, candidate_hills)
     peaks.loc[:, 'named_hill_closest_distance'] = nearest_hill_distance
     peaks.loc[:, 'named_hill_index'] = nearest_hill_index
-    hills_to_report = filter_visited_summits_by_proximity(peaks)
+    hills_to_report = filter_visited_summits_by_proximity(peaks, distance_proximity)
     hill_report_data = candidate_hills.iloc[hills_to_report]
     return hill_report_data
+
+
+def get_hills_within_latlng_grid(peaks, candidate_hills, threshold_deg=0.1):
+    latlng_threshold = threshold_deg
+
+    min_lat = peaks['lat'].min() - latlng_threshold
+    max_lat = peaks['lat'].max() + latlng_threshold
+
+    min_lng = peaks['lng'].min() - latlng_threshold
+    max_lng = peaks['lng'].max() + latlng_threshold
+
+    candidate_hills = candidate_hills.loc[
+        (candidate_hills['Latitude'] > min_lat) & (candidate_hills['Latitude'] < max_lat)]
+    candidate_hills = candidate_hills.loc[
+        (candidate_hills['Longitude'] > min_lng) & (candidate_hills['Longitude'] < max_lng)]
+
+    return candidate_hills
 
 
 def get_hills_within_altitude_profile(db, peaks, height_threshold=50):
