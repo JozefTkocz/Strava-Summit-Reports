@@ -2,10 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="41f98547-d648-4963-ba4d-b729ce86855c" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/update_weather_info/reporting.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Hill Finder Proof of Concept.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/Hill Finder Proof of Concept.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/register_user/lambda_function.py" beforeDir="false" afterPath="$PROJECT_DIR$/register_user/lambda_function.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/update_weather_info/hill_location.py" beforeDir="false" afterPath="$PROJECT_DIR$/update_weather_info/hill_location.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/update_weather_info/lambda_function.py" beforeDir="false" afterPath="$PROJECT_DIR$/update_weather_info/lambda_function.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/update_weather_info/summit_report.py" beforeDir="false" afterPath="$PROJECT_DIR$/update_weather_info/summit_report.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,7 +51,7 @@
       <recent name="C:\Users\jozef\Documents\GitHub\WeatherInfoBot\update_weather_info" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.update_activities">
+  <component name="RunManager" selected="Python.lambda_function (2)">
     <configuration name="lambda_function (1)" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="WeatherInfoBot" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -62,6 +65,27 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/update_summit_info/lambda_function.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="lambda_function (2)" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="WeatherInfoBot" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/register_user" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/register_user/lambda_function.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -160,11 +184,13 @@
       <item itemvalue="Python.lambda_function (1)" />
       <item itemvalue="Python.sns_example" />
       <item itemvalue="Python.update_activities" />
+      <item itemvalue="Python.lambda_function (2)" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.update_activities" />
+        <item itemvalue="Python.lambda_function (2)" />
         <item itemvalue="Python.lambda_function" />
+        <item itemvalue="Python.update_activities" />
         <item itemvalue="Python.lambda_function (1)" />
         <item itemvalue="Python.sns_example" />
       </list>
@@ -219,21 +245,25 @@
     </state>
     <state x="448" y="190" key="FileChooserDialogImpl/0.0.1536.816@0.0.1536.816" timestamp="1649697911023" />
     <state x="448" y="192" key="FileChooserDialogImpl/0.0.1536.824@0.0.1536.824" timestamp="1644578538746" />
-    <state width="1515" height="155" key="GridCell.Tab.0.bottom" timestamp="1644598120496">
-      <screen x="0" y="0" width="1536" height="824" />
+    <state width="1515" height="204" key="GridCell.Tab.0.bottom" timestamp="1649700672571">
+      <screen x="0" y="0" width="1536" height="816" />
     </state>
+    <state width="1515" height="204" key="GridCell.Tab.0.bottom/0.0.1536.816@0.0.1536.816" timestamp="1649700672571" />
     <state width="1515" height="155" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1644598120496" />
-    <state width="1515" height="155" key="GridCell.Tab.0.center" timestamp="1644598120496">
-      <screen x="0" y="0" width="1536" height="824" />
+    <state width="1515" height="204" key="GridCell.Tab.0.center" timestamp="1649700672571">
+      <screen x="0" y="0" width="1536" height="816" />
     </state>
+    <state width="1515" height="204" key="GridCell.Tab.0.center/0.0.1536.816@0.0.1536.816" timestamp="1649700672571" />
     <state width="1515" height="155" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1644598120496" />
-    <state width="1515" height="155" key="GridCell.Tab.0.left" timestamp="1644598120496">
-      <screen x="0" y="0" width="1536" height="824" />
+    <state width="1515" height="204" key="GridCell.Tab.0.left" timestamp="1649700672571">
+      <screen x="0" y="0" width="1536" height="816" />
     </state>
+    <state width="1515" height="204" key="GridCell.Tab.0.left/0.0.1536.816@0.0.1536.816" timestamp="1649700672571" />
     <state width="1515" height="155" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1644598120496" />
-    <state width="1515" height="155" key="GridCell.Tab.0.right" timestamp="1644598120496">
-      <screen x="0" y="0" width="1536" height="824" />
+    <state width="1515" height="204" key="GridCell.Tab.0.right" timestamp="1649700672571">
+      <screen x="0" y="0" width="1536" height="816" />
     </state>
+    <state width="1515" height="204" key="GridCell.Tab.0.right/0.0.1536.816@0.0.1536.816" timestamp="1649700672571" />
     <state width="1515" height="155" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1644598120496" />
     <state x="277" y="54" key="SettingsEditor" timestamp="1644575251559">
       <screen x="0" y="0" width="1536" height="824" />

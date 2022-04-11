@@ -24,6 +24,7 @@ def lambda_handler(event, context):
         scope = None
 
     if code is not None and scope is not None:
+        pass
         # check no error
         # upsert token to store
         # return success message

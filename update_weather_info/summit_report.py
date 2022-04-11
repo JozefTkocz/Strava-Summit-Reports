@@ -1,6 +1,6 @@
 import pandas as pd
 
-from .hill_classification import PRIMARY_CLASSIFICATIONS, \
+from hill_classification import PRIMARY_CLASSIFICATIONS, \
     PRIMARY_TOP_CLASSIFICATIONS, HEIRARCHICAL_CLASSIFICATIONS
 
 
