@@ -14,7 +14,7 @@ from weatherapi.endpoint_methods import get_weather_history
 from weatherapi.web_api.interface import APINotCalledException
 
 from .hill_classification import get_report_summit_classifications
-from .hill_location import get_candidate_summits_from_local_maxima, filter_visited_summits
+from .hill_location import filter_visited_summits
 from .summit_report import generate_visited_summit_report
 
 
@@ -56,8 +56,8 @@ def lambda_handler(event, context):
     activity_info = strava_client.get_activity(athlete_id=athlete_id, activity_id=activity_id)
 
     # Load lat,lng coordinates
-    start_lat = activity_info['start_latitude']
-    start_lng = activity_info['start_longitude']
+    start_lat = activity_info['start_latlng'][0]
+    start_lng = activity_info['start_latlng'][1]
     activity_timezone = get_timezone_at_location(start_lat, start_lng)
     start_time = pd.to_datetime(activity_info['start_date']).to_pydatetime()
     start_time_local = convert_utc_to_timezone_at_location(start_time, activity_timezone)
