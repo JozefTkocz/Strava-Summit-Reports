@@ -3,7 +3,6 @@ from typing import Union
 import numpy as np
 import pandas as pd
 
-# from scipy import signal
 from peak_finder import detect_peaks
 
 

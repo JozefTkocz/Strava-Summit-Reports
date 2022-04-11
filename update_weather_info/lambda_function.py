@@ -12,10 +12,10 @@ from tzwhere import tzwhere
 from weatherapi.endpoint_methods import get_weather_history
 from weatherapi.web_api.interface import APINotCalledException
 
-from update_weather_info.reporting import construct_weather_summary_string, generate_strava_activity_report
-from .hill_classification import get_report_summit_classifications
-from .hill_location import filter_visited_summits
-from .summit_report import generate_visited_summit_report
+from reporting import construct_weather_summary_string, generate_strava_activity_report
+from hill_classification import get_report_summit_classifications
+from hill_location import filter_visited_summits
+from summit_report import generate_visited_summit_report
 
 
 def lambda_handler(event, context):
