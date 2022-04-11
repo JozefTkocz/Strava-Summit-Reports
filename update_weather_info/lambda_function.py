@@ -1,6 +1,5 @@
 import datetime as dt
 import os
-from typing import Union
 import json
 
 
@@ -13,6 +12,7 @@ from tzwhere import tzwhere
 from weatherapi.endpoint_methods import get_weather_history
 from weatherapi.web_api.interface import APINotCalledException
 
+from update_weather_info.reporting import construct_weather_summary_string, generate_strava_activity_report
 from .hill_classification import get_report_summit_classifications
 from .hill_location import filter_visited_summits
 from .summit_report import generate_visited_summit_report
@@ -23,33 +23,14 @@ def lambda_handler(event, context):
     print("From SNS: ")
     print(message)
 
-    aws_access_key_id = os.environ.get('aws_access_key_id')
-    aws_secret_access_key = os.environ.get('aws_secret_access_key')
-    region_name = os.environ.get('region_name')
-    table_name = os.environ.get('table_name')
-
-    client_id = os.environ.get('client_id')
-    client_secret = os.environ.get('client_secret')
-
+    token_cache = create_token_cache_from_env()
+    strava_client = create_strava_client_from_env(token_cache)
     weather_api_key = os.environ.get('weather_api_key')
 
     # Parse athlete ID and activity ID
     athlete_id = message.get('athlete_id')
     activity_id = message.get('activity_id')
     print(f'Processing weather data for athlete {athlete_id}, activity {activity_id}')
-
-    # Retrieve authentication tokens from dynamodb
-    print('Connecting to authentication token database...')
-    token_cache = DynamoDBCache(aws_access_key_id=aws_access_key_id,
-                                aws_secret_access_key=aws_secret_access_key,
-                                region_name=region_name,
-                                table_name=table_name)
-
-    strava_authorisation = OAuthHandler(client_id=client_id,
-                                        client_secret=client_secret,
-                                        token_cache=token_cache)
-
-    strava_client = StravaClient(strava_authorisation)
 
     # Request activity information
     print(f'Requesting details for activity {activity_id}...')
@@ -103,17 +84,9 @@ def lambda_handler(event, context):
                 raise KeyError(f'Column {c} not available in datastream')
 
         route_data = parse_streams_dataframe(route_stream_json)
-        # if scipy is available, the computation can be sped up using the following
-        # The 250 mb limit on dependencies in aws makes this difficult, so bypass this step, and brute-force it instead.
-        # summits = get_candidate_summits_from_local_maxima(route_data)
-
-        # In absence of a good peak finding algorithm, use all available GPS points
-        summits = route_data
-        # Load the hills database
-        # hills_database = pd.read_parquet('database.parquet.gzip')
         hills_database = pd.read_pickle('database.pkl')
 
-        summits_to_report = filter_visited_summits(hills_database, summits)
+        summits_to_report = filter_visited_summits(hills_database, route_data)
         reported_classifications = get_report_summit_classifications(summits_to_report)
         visited_summits_report = generate_visited_summit_report(reported_classifications, summits_to_report)
     except Exception as e:
@@ -149,42 +122,27 @@ def lambda_handler(event, context):
     return {'statusCode': 200}
 
 
-def generate_strava_activity_report(weather_report: Union[str, None],
-                                    summit_report: Union[str, None]) -> Union[str, None]:
-    report = ''
-    if summit_report is not None:
-        report = summit_report
-
-    if len(report) and (weather_report is not None):
-        print('Adding newlines...')
-        report += '\n\n'
-
-    if weather_report is not None:
-        report += weather_report
-
-    if len(report):
-        return report
-    else:
-        return None
+def create_strava_client_from_env(token_cache):
+    client_id = os.environ.get('client_id')
+    client_secret = os.environ.get('client_secret')
+    strava_authorisation = OAuthHandler(client_id=client_id,
+                                        client_secret=client_secret,
+                                        token_cache=token_cache)
+    strava_client = StravaClient(strava_authorisation)
+    return strava_client
 
 
-def construct_weather_summary_string(df, start_time, end_time):
-    start = pd.to_datetime(start_time).floor('1H')
-    end = pd.to_datetime(end_time).ceil('1H')
-    data = df.loc[(df.index >= start) & (df.index <= end)]
-    degree_symbol = u'\N{DEGREE SIGN}'
-
-    condition = data['condition'].mode().iloc[0]['text']
-    temperature = data['temp_c'].mean()
-    feels_like = data['feelslike_c'].min()
-    windspeed = data['wind_mph'].mean()
-    gust = data['gust_mph'].max()
-
-    summary = (f"Weather: {condition}\n"
-               f"Temperature: {temperature:.1f} {degree_symbol}C (feels like {feels_like:.1f} {degree_symbol}C)\n"
-               f"Wind (mph): {windspeed:.1f}, gusting {gust:.1f}")
-
-    return summary
+def create_token_cache_from_env():
+    aws_access_key_id = os.environ.get('aws_access_key_id')
+    aws_secret_access_key = os.environ.get('aws_secret_access_key')
+    region_name = os.environ.get('region_name')
+    table_name = os.environ.get('table_name')
+    print('Connecting to authentication token database...')
+    token_cache = DynamoDBCache(aws_access_key_id=aws_access_key_id,
+                                aws_secret_access_key=aws_secret_access_key,
+                                region_name=region_name,
+                                table_name=table_name)
+    return token_cache
 
 
 def get_timezone_at_location(latitude, longutude):
