@@ -74,18 +74,8 @@ def lambda_handler(event, context):
 
     print(f'Requesting route stream data for activity {activity_id}')
     try:
-        required_stream_columns = ['latlng', 'time', 'altitude']
-        route_stream_json = strava_client.get_activity_stream_set(athlete_id=athlete_id,
-                                                                  activity_id=activity_id,
-                                                                  streams=required_stream_columns)
-
-        for c in required_stream_columns:
-            if c not in route_stream_json.keys():
-                raise KeyError(f'Column {c} not available in datastream')
-
-        route_data = parse_streams_dataframe(route_stream_json)
+        route_data = get_activity_stream_df(activity_id, athlete_id, strava_client)
         hills_database = pd.read_pickle('database.pkl')
-
         summits_to_report = filter_visited_summits(hills_database, route_data)
         reported_classifications = get_report_summit_classifications(summits_to_report)
         visited_summits_report = generate_visited_summit_report(reported_classifications, summits_to_report)
@@ -102,24 +92,38 @@ def lambda_handler(event, context):
 
     # Request update to strava activity
     if strava_report is not None:
-        print('Editing activity with report: ')
-        print(strava_report)
-        new_activity = UpdatableActivity.from_activity(activity_info)
-        print(new_activity.hide_from_home)
-        new_activity.description = strava_report
-        new_activity.hide_from_home = False
-
-        print(new_activity.to_json())
-
-        update = strava_client.update_activity(athlete_id=athlete_id,
-                                               activity_id=activity_id,
-                                               updatable_activity=new_activity)
-        print(update)
+        add_report_to_activity_description(activity_id, activity_info, athlete_id, strava_client, strava_report)
     else:
         print('No data to report. Exiting...')
 
     print('Executed successfully')
     return {'statusCode': 200}
+
+
+def add_report_to_activity_description(activity_id, activity_info, athlete_id, strava_client, strava_report):
+    print('Editing activity with report: ')
+    print(strava_report)
+    new_activity = UpdatableActivity.from_activity(activity_info)
+    print(new_activity.hide_from_home)
+    new_activity.description = strava_report
+    new_activity.hide_from_home = False
+    print(new_activity.to_json())
+    update = strava_client.update_activity(athlete_id=athlete_id,
+                                           activity_id=activity_id,
+                                           updatable_activity=new_activity)
+    print(update)
+
+
+def get_activity_stream_df(activity_id, athlete_id, strava_client):
+    required_stream_columns = ['latlng', 'time', 'altitude']
+    route_stream_json = strava_client.get_activity_stream_set(athlete_id=athlete_id,
+                                                              activity_id=activity_id,
+                                                              streams=required_stream_columns)
+    for c in required_stream_columns:
+        if c not in route_stream_json.keys():
+            raise KeyError(f'Column {c} not available in datastream')
+    route_data = parse_streams_dataframe(route_stream_json)
+    return route_data
 
 
 def create_strava_client_from_env(token_cache):
