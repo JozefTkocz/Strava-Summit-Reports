@@ -10,7 +10,8 @@ def generate_visited_summit_report(reported_classifications, summits_to_report):
 
 
 def generate_hill_data_strings(hill_report_data, reported_classifications):
-    df = pd.DataFrame(columns=PRIMARY_CLASSIFICATIONS + PRIMARY_TOP_CLASSIFICATIONS + HEIRARCHICAL_CLASSIFICATIONS.to_list())
+    df = pd.DataFrame(
+        columns=PRIMARY_CLASSIFICATIONS + PRIMARY_TOP_CLASSIFICATIONS + HEIRARCHICAL_CLASSIFICATIONS.to_list())
     for idx, rc in reported_classifications.items():
         df.loc[idx, :] = False
         df.loc[idx, rc] = True
