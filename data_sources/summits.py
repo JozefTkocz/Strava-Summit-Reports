@@ -4,8 +4,14 @@ import pandas as pd
 
 
 class SummitReference(Protocol):
-    def load(self, latitude_window: Tuple[float, float], longitude_window: Tuple[float, float]) -> pd.DataFrame:
-        ...
+    altitude_column: str
+    latitude_column: str
+    longitude_column: str
+
+    def load(self,
+             latitude_window: Tuple[float, float] = None,
+             longitude_window: Tuple[float, float] = None) -> pd.DataFrame:
+        pass
 
 
 class LocalFileSummitReference:

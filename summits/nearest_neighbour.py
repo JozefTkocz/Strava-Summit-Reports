@@ -1,6 +1,5 @@
 import numpy as np
-import pandas as pd
-from typing import Union, List, Tuple
+from typing import Union, Tuple
 
 from models.coordinates import CoordinateSet
 
@@ -21,7 +20,6 @@ def haversine_distance(lon1: Union[np.array, float],
     :param lat2: latitude coordinate of point 2
     :return: great circle distance between point 1 and point 2 in metres.
     """
-    # haversine formula
     dlon = lon2 - lon1
     dlat = lat2 - lat1
     a = np.square(np.sin(0.5 * dlat)) + np.cos(lat1) * np.cos(lat2) * np.square(np.sin(0.5 * dlon))
@@ -54,20 +52,4 @@ def nearest_neighbour_search(coordinates: CoordinateSet, reference_points: Coord
     return distances, minimum_indices
 
 
-def filter_visited_summits(db, peaks, distance_proximity=20):
-    candidate_hills = get_hills_within_altitude_profile(db, peaks)
-    candidate_hills = get_hills_within_latlng_grid(peaks=peaks, candidate_hills=candidate_hills, threshold_deg=0.1)
-    nearest_hill_distance, nearest_hill_index = find_nearest_summits(peaks, candidate_hills)
-    peaks.loc[:, 'named_hill_closest_distance'] = nearest_hill_distance
-    peaks.loc[:, 'named_hill_index'] = nearest_hill_index
-    hills_to_report = filter_visited_summits_by_proximity(peaks, distance_proximity)
-    hill_report_data = candidate_hills.iloc[hills_to_report]
-    return hill_report_data
 
-
-def filter_visited_summits_by_proximity(peaks, threshold_distance=10):
-    closest_points = pd.DataFrame(peaks.groupby('named_hill_index')['named_hill_closest_distance'].min())
-    closest_points['is_within_threshold'] = closest_points['named_hill_closest_distance'] < threshold_distance
-    # Pull out data for those visited hills
-    hills_to_report = closest_points.loc[closest_points['is_within_threshold']].index
-    return hills_to_report
