@@ -25,6 +25,5 @@ def test_local_file_summit_reference_filters_dataset():
     expected_result = pd.DataFrame({'Latitude': [2, 3, 4],
                                     'Longitude': [7, 8, 9]})
     actual_result = data_source.load(latitude_window=(2, 4))
-    print(actual_result)
 
     pd.testing.assert_frame_equal(expected_result, actual_result)

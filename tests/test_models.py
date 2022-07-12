@@ -14,7 +14,7 @@ def test_coordinate_set_doesnt_raise_with_inputs_of_same_length():
 
 def test_coordinate_set_index():
     coords = CoordinateSet(latitude=np.array([3, 4]), longitude=np.array([1, 2]))
-    expected_result = (2, 4)
+    expected_result = (4, 2)
     calculated_result = coords.index(1)
     assert expected_result == calculated_result
 
