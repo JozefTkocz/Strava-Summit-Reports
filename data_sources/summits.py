@@ -1,3 +1,4 @@
+import os.path
 from typing import Protocol, Tuple
 
 import pandas as pd
@@ -39,3 +40,10 @@ class LocalFileSummitReference:
     def _load_from_file(self):
         df = pd.read_pickle(self.filepath)
         return df
+
+
+if __name__ == '__main__':
+    current_path = os.path.dirname(os.path.realpath(__file__))
+    data = LocalFileSummitReference(os.path.join(current_path, 'database.pkl'))
+    df = data.load()
+    df.to_csv('hills.csv')
