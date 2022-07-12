@@ -116,6 +116,15 @@ def convert_classification_codes_to_names(summit_classifications: Dict[str, List
 
 def reduce_classification_list(summit_classifications: Dict[str, List[str]],
                                report_configuration: ReportConfiguration):
+    """
+    Report primary summit types, even if it is a duplication
+
+    Report non-primary summits only once, with the highest classification
+    
+    :param summit_classifications:
+    :param report_configuration:
+    :return:
+    """
     result = {}
     primary_classes = report_configuration.primary_classifications()
 
@@ -128,7 +137,6 @@ def reduce_classification_list(summit_classifications: Dict[str, List[str]],
             # If this hill is a primary class, and this code is the primary class, always report
             if report_configuration.get_class(summit_class).is_primary:
                 reported_classes.append(summit_class)
-                break
 
             if not is_primary_summit:
                 # determine the classification rank
