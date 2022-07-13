@@ -1,49 +1,20 @@
 import pandas as pd
 import numpy as np
-from dataclasses import dataclass
 from typing import Dict, List, Union
 
-
-@dataclass
-class ReportedSummit:
-    code: str
-    name: str
-    is_primary: bool
-    is_top: bool
+from summits.report_config import ReportConfiguration
 
 
-class ReportConfiguration:
-    def __init__(self, summit_classes: List[ReportedSummit]):
-        self.classes = summit_classes
-        self.primary_classifications = self.primary_classifications()
-        self.primary_top_classifications = self.primary_top_classifications()
-        self.secondary_classification_ranking = self.secondary_classification_ranking()
-        self.highest_classification_rank = self.secondary_classification_ranking.index.max()
-
-    def get_rank(self, class_name: str) -> Union[int, None]:
-        rank = self.secondary_classification_ranking.loc[
-            self.secondary_classification_ranking == class_name].index.values
-        if len(rank):
-            return rank[0]
-        else:
-            return None
-
-    def primary_classifications(self) -> List[str]:
-        return [c.name for c in self.classes if c.is_primary and not c.is_top]
-
-    def primary_top_classifications(self) -> List[str]:
-        return [c.name for c in self.classes if c.is_primary and c.is_top]
-
-    def secondary_classification_ranking(self) -> pd.Series:
-        return pd.Series(reversed([c.name for c in self.classes if not c.is_primary]))
-
-
-def generate_summit_report(summits: pd.DataFrame) -> str:
+def generate_summit_report(summits: pd.DataFrame, config: ReportConfiguration) -> str:
+    classification_codes = config.code_mapping
     summit_classifications = get_summit_classifications(summits=summits,
-                                                        classification_columns=list(CLASSIFICATION_CODES.keys()))
-    summit_classifications = convert_classification_codes_to_names(summit_classifications, mapping=CLASSIFICATION_CODES)
+                                                        classification_columns=list(classification_codes.keys()))
+    summit_classifications = convert_classification_codes_to_names(summit_classifications, mapping=classification_codes)
+    reduced_classifications = reduce_classification_list(summit_classifications=summit_classifications,
+                                                         report_configuration=config)
+    print(reduced_classifications)
 
-    return 'no'
+    return generate_visited_summit_report(summits, reduced_classifications, config=config)
 
 
 def get_summit_classifications(summits: pd.DataFrame,
@@ -143,3 +114,91 @@ def reduce_classification_list(summit_classifications: Dict[str, List[str]],
         reported_classifications.update({summit_name: final_summit_types})
 
     return reported_classifications
+
+
+def generate_visited_summit_report(summits_database_table: pd.DataFrame,
+                                   visited_summit_classifications: Dict[int, List[str]],
+                                   config: ReportConfiguration) -> str:
+    """
+    Given a reference database table of summits, including 'Name' and 'Height' columns, and dictionary of visited
+    summits and the corresponding classifications they are to be reported under, and a ReportConfiguration object
+    defining which summit classifications are reported, and their reporting order, generate a summary report o the
+    visited summits.
+
+    :param summits_database_table: pd.DataFrame of summit data, inlcuding 'Name' and 'Height' columns
+    :param visited_summit_classifications: dictionary mapping summit IDs to the summit classifications they are to be
+    reported under
+    :param config: ReportConfig object defining the reported summit classifications, and their reporting order.
+    :return: string summary report for the visited summits
+    """
+    report_strings_by_classification = get_summit_descriptions_by_classification(summits_database_table,
+                                                                                 visited_summit_classifications,
+                                                                                 config)
+    return generate_report_from_classification_descriptions(report_strings_by_classification)
+
+
+def get_summit_descriptions_by_classification(hill_report_data: pd.DataFrame,
+                                              reported_classifications: Dict[int, List[str]],
+                                              config: ReportConfiguration) -> Dict[str, str]:
+    """
+    Given a table of summit information (including 'Name' and 'Height' columns), and a dictionary mapping summit names
+    to the classifications they are to be reported under, and a ReportConfiguration object defining the summit
+    classifications that are to be reported, and their reporting order, generate a dictionary of summit descriptions
+    for each classification to be reported
+
+    :param hill_report_data: pd.DataFrame containing summit information, including 'Name' amd 'Metres' columns
+    :param reported_classifications: Dictionary mapping each summit name to the classifications it is to be reported
+    under
+    :param config: ReportConfiguration class defining the summit classifications that are reported, and their report
+    order
+    :return: Dictionary of summit classifications and their corresponding summit descriptions.
+    """
+    # Make a table of Boolean flags denoting whether a summit belongs to each classification in the report
+    summit_classes = pd.DataFrame(columns=config.code_mapping.values())
+    for idx, (summit_name, reported_classes) in enumerate(reported_classifications.items()):
+        summit_classes.loc[idx, :] = False
+        summit_classes.loc[idx, reported_classes] = True
+
+    summit_descriptions = {}
+    for classification in summit_classes.columns:
+        summits_of_class = summit_classes.loc[summit_classes[classification]].index
+        if summits_of_class.any():
+            descriptions_for_class = []
+            for summit in summits_of_class:
+                descriptions_for_class.append(generate_summit_description(summit, hill_report_data))
+            summit_descriptions.update({str(classification) + 's': ', '.join(descriptions_for_class)})
+    return summit_descriptions
+
+
+def generate_report_from_classification_descriptions(classification_reports: Dict[str, str]) -> Union[str, None]:
+    """
+    Given a dictionary of summit classifications and corresponding summit report summaries, produce a final report
+    detailing summit information across all classifications.
+
+    :param classification_reports: dictionary where keys are summit classifications, and values are the
+    corresponding summary reports for each classification.
+    :return: string containing complete summary report
+    """
+    if not len(classification_reports):
+        return None
+
+    report = 'Summits visited:\n'
+    for classification, sub_report in classification_reports.items():
+        report += classification + ': '
+        report += sub_report + '\n\n'
+
+    return report[:-2]
+
+
+def generate_summit_description(hill_id: int, hill_data: pd.DataFrame) -> str:
+    """
+    Given a pd.DataFrame containing 'Name' and 'Metres' columns, and an index value, create a short summary string
+    describing the summit at that index. The string should be formatted as '<name> <height> m'.
+
+    :param hill_id: index of the targeted database entry
+    :param hill_data: database of summit data, including 'Name' and 'Height' columns
+    :return: a string describing the summit corresponding to the chosen index.
+    """
+    name = hill_data.loc[hill_id, 'Name']
+    height = hill_data.loc[hill_id, 'Metres']
+    return f'{name} ({height} m)'

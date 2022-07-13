@@ -1,8 +1,8 @@
 import pandas as pd
 
 from summits.summit_report import get_summit_classifications, convert_classification_codes_to_names, \
-    reduce_classification_list, ReportedSummit, ReportConfiguration
-from summits.report_config import REPORT_CONFIG
+    reduce_classification_list, generate_visited_summit_report, generate_summit_report
+from summits.report_config import REPORT_CONFIG, ReportConfiguration, ReportedSummit
 
 
 def test_get_summit_classifications():
@@ -116,3 +116,51 @@ def test_reduce_classification_list_with_configuration():
         return {key: sorted(value) for key, value in dictionary.items()}
 
     assert sort_dict(calculated_result) == sort_dict(expected_result)
+
+
+def test_generate_visited_summit_report():
+    df = pd.DataFrame({'D': [1, 1, 1, 0, 0],
+                       'DT': [0, 0, 0, 1, 0],
+                       'G': [0, 0, 0, 0, 0],
+                       'GT': [1, 1, 1, 1, 0],
+                       'Tu': [1, 1, 1, 1, 1],
+                       'S': [1, 1, 1, 1, 1],
+                       'Name': ["King's Seat Hill", "Tarmangie Hill", "Innerdownie", "Whitewisp Hill",
+                                "Cairnmorris Hill"],
+                       'Metres': [1, 2, 3, 4, 5]})
+
+    summit_classes = {"King's Seat Hill": ['Donald'],
+                      "Tarmangie Hill": ['Donald'],
+                      "Innerdownie": ['Donald'],
+                      "Whitewisp Hill": ['Graham Top', 'Donald Top'],
+                      "Cairnmorris Hill": ['Tump']}
+    calculated_result = generate_visited_summit_report(summits_database_table=df,
+                                                       visited_summit_classifications=summit_classes,
+                                                       config=REPORT_CONFIG)
+    expected_result = ('Summits visited:\n'
+                       "Donalds: King's Seat Hill (1 m), Tarmangie Hill (2 m), Innerdownie (3 m)\n\n"
+                       "Graham Tops: Whitewisp Hill (4 m)\n\n"
+                       "Donald Tops: Whitewisp Hill (4 m)\n\n"
+                       "Tumps: Cairnmorris Hill (5 m)")
+    assert calculated_result == expected_result
+
+
+def test_generate_summit_report_integration():
+    visited_summits_df = pd.DataFrame({'D': [1, 1, 1, 0, 0],
+                                       'DT': [0, 0, 0, 1, 0],
+                                       'G': [0, 0, 0, 0, 0],
+                                       'GT': [1, 1, 1, 1, 0],
+                                       'Tu': [1, 1, 1, 1, 1],
+                                       'S': [1, 1, 1, 1, 1],
+                                       'not_classified': [1, 1, 1, 1, 1],
+                                       'Name': ["King's Seat Hill", "Tarmangie Hill", "Innerdownie", "Whitewisp Hill",
+                                                "Cairnmorris Hill"],
+                                       'Metres': [1, 2, 3, 4, 5]})
+    calculated_result = generate_summit_report(summits=visited_summits_df, config=REPORT_CONFIG)
+    expected_result = ('Summits visited:\n'
+                       "Donalds: King's Seat Hill (1 m), Tarmangie Hill (2 m), Innerdownie (3 m)\n\n"
+                       "Graham Tops: Whitewisp Hill (4 m)\n\n"
+                       "Donald Tops: Whitewisp Hill (4 m)\n\n"
+                       "Tumps: Cairnmorris Hill (5 m)")
+
+    assert calculated_result == expected_result
