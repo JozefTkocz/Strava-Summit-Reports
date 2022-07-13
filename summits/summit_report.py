@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from typing import Dict, List, Union
 
-from summits.report_config import ReportConfiguration
+from summits.report_configuration import ReportConfiguration
 
 
 def generate_summit_report(summits: pd.DataFrame, config: ReportConfiguration) -> str:
@@ -12,7 +12,6 @@ def generate_summit_report(summits: pd.DataFrame, config: ReportConfiguration) -
     summit_classifications = convert_classification_codes_to_names(summit_classifications, mapping=classification_codes)
     reduced_classifications = reduce_classification_list(summit_classifications=summit_classifications,
                                                          report_configuration=config)
-    print(reduced_classifications)
 
     return generate_visited_summit_report(summits, reduced_classifications, config=config)
 
@@ -117,7 +116,7 @@ def reduce_classification_list(summit_classifications: Dict[str, List[str]],
 
 
 def generate_visited_summit_report(summits_database_table: pd.DataFrame,
-                                   visited_summit_classifications: Dict[int, List[str]],
+                                   visited_summit_classifications: Dict[str, List[str]],
                                    config: ReportConfiguration) -> str:
     """
     Given a reference database table of summits, including 'Name' and 'Height' columns, and dictionary of visited
@@ -138,7 +137,7 @@ def generate_visited_summit_report(summits_database_table: pd.DataFrame,
 
 
 def get_summit_descriptions_by_classification(hill_report_data: pd.DataFrame,
-                                              reported_classifications: Dict[int, List[str]],
+                                              reported_classifications: Dict[str, List[str]],
                                               config: ReportConfiguration) -> Dict[str, str]:
     """
     Given a table of summit information (including 'Name' and 'Height' columns), and a dictionary mapping summit names
