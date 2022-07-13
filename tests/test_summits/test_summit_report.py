@@ -46,10 +46,10 @@ def test_convert_classification_codes_to_names():
 
 
 def test_reduce_classifications_list_extracts_primary_summits_and_primary_tops():
-    summit_classifications = {'summit_1': ['Munro', 'Munro Top', 'Tump'],
+    summit_classifications = {'summit_1': ['Graham', 'Donald', 'Tump'],
                               'summit_2': ['Munro Top', 'Tump', 'Hump'],
                               'summit_3': ['Hump', 'Tump'],
-                              'summit_4': ['Tump', 'Hump']}
+                              'summit_4': ['Tump']}
 
     munro = ReportedSummit(code='M', name='Munro', is_primary=True)
     munro_top = ReportedSummit(code='MT', name='Munro Top', is_primary=True)
@@ -58,9 +58,40 @@ def test_reduce_classifications_list_extracts_primary_summits_and_primary_tops()
 
     report_config = ReportConfiguration([munro, munro_top, hump, tump])
 
-    expected_result = {'summit_1': ['Munro'],
+    expected_result = {'summit_1': ['Munro', 'Munro Top'],
                        'summit_2': ['Munro Top'],
-                       'summit_3': ['Hump, Tump'],
-                       'summit_4': ['Tump, Hump']}
+                       'summit_3': ['Hump'],
+                       'summit_4': ['Hump']}
     calculated_result = reduce_classification_list(summit_classifications, report_config)
     assert calculated_result == expected_result
+
+
+def test_specific_case():
+    donald = ReportedSummit(code='D', name='Donald', is_primary=True, is_top=False)
+    donald_top = ReportedSummit(code='DT', name='Donald Top', is_primary=True, is_top=True)
+    graham_top = ReportedSummit(code='GT', name='Graham Top', is_primary=True, is_top=True)
+    graham = ReportedSummit(code='G', name='Graham', is_primary=True, is_top=False)
+    tump = ReportedSummit(code='Tu', name='Tump', is_primary=False, is_top=False)
+    sim = ReportedSummit(code='Sm', name='Sim', is_primary=False, is_top=False)
+
+    input_data = {"King's Seat Hill": ['Tump', 'Donald', 'Graham Top'],
+                  "Tarmangie Hill": ['Tump', 'Donald', 'Graham Top'],
+                  "Innerdownie": ['Tump', 'Donald', 'Graham Top'],
+                  "Whitewisp Hill": ['Tump', 'Donald Top', 'Graham Top'],
+                  "Cairnmorris Hill": ['Sim', 'Tump']}
+
+    report_config = ReportConfiguration([graham, donald, graham_top, donald_top, tump, sim])
+    calculated_result = reduce_classification_list(input_data, report_config)
+    expected_result = {"King's Seat Hill": ['Donald'],
+                       "Tarmangie Hill": ['Donald'],
+                       "Innerdownie": ['Donald'],
+                       "Whitewisp Hill": ['Graham Top', 'Donald Top'],
+                       "Cairnmorris Hill": ['Tump']}
+
+    # list order is not important, sort lists in returned dict
+    def sort_dict(dictionary):
+        return {key: sorted(value) for key, value in dictionary.items()}
+
+    print(sort_dict(calculated_result))
+    print(sort_dict(expected_result))
+    assert sort_dict(calculated_result) == sort_dict(expected_result)

@@ -21,13 +21,11 @@ CLASSIFICATION_CODES = {'M': 'Munro',
 
 PRIMARY_CLASSIFICATIONS = ['Munro', 'Corbett', 'Graham', 'Donald', 'Furth', 'Wainwright']
 PRIMARY_TOP_CLASSIFICATIONS = ['Munro Top', 'Corbett Top', 'Graham Top', 'Donald Top']
-HEIRARCHICAL_CLASSIFICATIONS = pd.Series(data={
-    1: 'Hewitt',
-    2: 'Nutall',
-    3: 'Marilyn',
-    4: 'Hump',
-    5: 'Tump',
-})
+HEIRARCHICAL_CLASSIFICATIONS = pd.Series(data={1: 'Hewitt',
+                                               2: 'Nutall',
+                                               3: 'Marilyn',
+                                               4: 'Hump',
+                                               5: 'Tump'})
 
 
 @dataclass
@@ -35,15 +33,28 @@ class ReportedSummit:
     code: str
     name: str
     is_primary: bool
+    is_top: bool
 
 
 class ReportConfiguration:
     def __init__(self, summit_classes: List[ReportedSummit]):
-        self.classes = summit_classes
-
+        self.default_reported_summit = ReportedSummit(code='', name='', is_primary=False, is_top=False)
+        self.classes = summit_classes + [self.default_reported_summit]
         self.class_dict = self._create_class_dict()
         self.hierarchy = self._create_class_hierarchy()
         self.highest_classification_rank = max(self.hierarchy.values())
+
+    def _build_df(self):
+        config = []
+        for summit_type in self.classes:
+            config_for_class = {}
+            config_for_class.update({'code': summit_type.code,
+                                     'name': summit_type.name,
+                                     'is_primary': summit_type.is_primary,
+                                     'is_top': summit_type.is_top})
+            config.append(config_for_class)
+
+        return pd.DataFrame(config)
 
     def _create_class_dict(self):
         return {c.name: c for c in self.classes}
@@ -52,13 +63,19 @@ class ReportConfiguration:
         return {c.name: i for i, c in enumerate(self.classes) if not c.is_primary}
 
     def get_class(self, class_name: str) -> ReportedSummit:
-        return self.class_dict.get(class_name)
+        return self.class_dict.get(class_name, self.default_reported_summit)
 
     def get_rank(self, class_name: str) -> int:
         return self.hierarchy.get(class_name)
 
     def primary_classifications(self):
-        return [c.name for c in self.classes if c.is_primary]
+        return [c.name for c in self.classes if c.is_primary and not c.is_top]
+
+    def primary_top_classifications(self):
+        return [c.name for c in self.classes if c.is_primary and c.is_top]
+
+    def secondary_classifications(self):
+        return pd.Series(reversed([c.name for c in self.classes if not c.is_primary]))
 
 
 def generate_summit_report(summits: pd.DataFrame) -> str:
@@ -86,6 +103,7 @@ def get_summit_classifications(summits: pd.DataFrame,
     summit_classification_codes = {}
     for summit in df.columns:
         classification_series = df[summit]
+        print(classification_series)
         classifications = classification_series.loc[classification_series].index.to_list()
         summit_classification_codes.update({summit: classifications})
 
@@ -117,37 +135,48 @@ def convert_classification_codes_to_names(summit_classifications: Dict[str, List
 def reduce_classification_list(summit_classifications: Dict[str, List[str]],
                                report_configuration: ReportConfiguration):
     """
-    Report primary summit types, even if it is a duplication
+    Report primary summit types, even if it is a duplication.
+    Only report primary tops if they're also not primary non-tops
 
     Report non-primary summits only once, with the highest classification
-    
+
     :param summit_classifications:
     :param report_configuration:
     :return:
     """
     result = {}
-    primary_classes = report_configuration.primary_classifications()
 
-    for summit, classification_codes in summit_classifications.items():
-        highest_rank = report_configuration.highest_classification_rank
-        is_primary_summit = np.any([c in primary_classes for c in classification_codes])
-        reported_classes = []
+    for summit_name, summit_types in summit_classifications.items():
+        final_summit_types = []
+        highest_rank = report_configuration.secondary_classifications().index.max()
 
-        for summit_class in classification_codes:
+        is_primary_summit = np.any([t in report_configuration.primary_classifications() for t in summit_types])
+        is_primary_top = np.any([t in report_configuration.primary_top_classifications() for t in summit_types])
+
+        for summit_type in summit_types:
             # If this hill is a primary class, and this code is the primary class, always report
-            if report_configuration.get_class(summit_class).is_primary:
-                reported_classes.append(summit_class)
+            if is_primary_summit and summit_type in report_configuration.primary_classifications():
+                final_summit_types.append(summit_type)
 
-            if not is_primary_summit:
+            # If this hill is a primary top class and not also a primary class and  this code is not the primary top
+            # class
+            if is_primary_top and not is_primary_summit and summit_type in report_configuration.primary_top_classifications():
+                final_summit_types.append(summit_type)
+
+            # if it's neither a primary or a primary top
+            if not (is_primary_summit or is_primary_top):
                 # determine the classification rank
-                rank = report_configuration.get_rank(summit_class)
-                # if this ranks higher (i.e. it has a lower number than the current winner), replace the
-                # classification with the new one
-                if rank <= highest_rank:
-                    highest_rank = rank
-                    reported_classes.append(summit_class)
+                hierarchical_classifications = report_configuration.secondary_classifications()
+                rank = hierarchical_classifications.loc[hierarchical_classifications == summit_type].index.values
+                if len(rank):  # if it has a rank...
+                    rank = rank[0]
+                    # if this ranks higher (i.e. it has a lower number than the current winner), replace the
+                    # classification with the new one
+                    if rank >= highest_rank:
+                        highest_rank = rank
+                        final_summit_types.append(summit_type)
 
-        result.update({summit: reported_classes})
+        result.update({summit_name: final_summit_types})
 
     return result
 
@@ -198,11 +227,10 @@ def reduce_classification_list_old(summit_classifications: Dict[str, List[str]])
 
 
 if __name__ == '__main__':
-    munro = ReportedSummit(code='M', name='Munro', is_primary=True)
-    munro_top = ReportedSummit(code='MT', name='Munro Top', is_primary=True)
-    hump = ReportedSummit(code='H', name='Hump', is_primary=False)
-    tump = ReportedSummit(code='T', name='Tump', is_primary=False)
+    munro = ReportedSummit(code='M', name='Munro', is_primary=True, is_top=False)
+    munro_top = ReportedSummit(code='MT', name='Munro Top', is_primary=True, is_top=True)
+    hump = ReportedSummit(code='H', name='Hump', is_primary=False, is_top=False)
+    tump = ReportedSummit(code='T', name='Tump', is_primary=False, is_top=False)
 
     config = ReportConfiguration([munro, munro_top, hump, tump])
-    print(config.hierarchy)
-    print(config.classes)
+    print(config._build_df())
