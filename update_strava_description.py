@@ -3,7 +3,7 @@ import logging
 import os
 
 from summits import report_visited_summits
-from lambda_helpers import create_strava_client_from_env
+from lambda_helpers.strava_client import create_strava_client_from_env
 from stravaclient.models.activity import UpdatableActivity
 
 
