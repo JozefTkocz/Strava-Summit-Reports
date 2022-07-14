@@ -35,7 +35,7 @@ def lambda_handler(event, context):
 
     if strava_report is not None:
         activity.description = strava_report
-        strava_client.update_activity(activity)
+        strava_client.update_activity(athlete_id=athlete_id, activity_id=activity_id, updatable_activity=activity)
     else:
         logging.info('No data to report. Exiting...')
 
@@ -65,9 +65,12 @@ def get_summit_report(activity_id, athlete_id, strava_client):
                                                            activity_id=activity_id,
                                                            streams=['latlng'],
                                                            as_df=True)
-        return report_visited_summits(lat=route_data['lat'].values,
-                                      lng=route_data['lng'].values,
-                                      database_filepath=DATABASE_FILEPATH)
+        summit_report = report_visited_summits(lat=route_data['lat'].values,
+                                               lng=route_data['lng'].values,
+                                               database_filepath=DATABASE_FILEPATH)
+        logging.info('Generated visited summit report:')
+        logging.info(summit_report)
+        return summit_report
     except:
         logging.exception('Unable to generate visited summits report')
         return None
@@ -75,8 +78,11 @@ def get_summit_report(activity_id, athlete_id, strava_client):
 
 def get_weather_report(activity_data, weather_api_key):
     try:
-        return generate_weather_report_for_activity(strava_activity=activity_data,
-                                                    api_key=weather_api_key)
+        weather_report = generate_weather_report_for_activity(strava_activity=activity_data,
+                                                              api_key=weather_api_key)
+        logging.info('Generated weather report:')
+        logging.info(weather_report)
+        return weather_report
     except:
         logging.exception('Unable to generate weather report')
         return None
