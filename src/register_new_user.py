@@ -20,7 +20,7 @@ def lambda_handler(event, context):
                 'body': json.dumps({'Authorisation url': code_request_url})}
     else:
         try:
-            athlete_id = strava_client.authorisation.authorise_athlete(authorisation_code)
+            athlete_id = strava_client.authorisation.post_athlete_auth_code(authorisation_code)
             return {'statusCode': 200,
                     'body': json.dumps(f'Successfully registered athlete with ID {athlete_id}')}
         except:
