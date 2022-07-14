@@ -8,7 +8,7 @@ logging.getLogger().setLevel(logging.INFO)
 
 def lambda_handler(event, context):
     strava_client = create_strava_client_from_env()
-    lambda_url = 'hhtps://' + event['headers'].get('host') + '/'
+    lambda_url = 'https://' + event['headers'].get('host') + '/'
 
     authorisation_code = parse_code_from_query_string(event)
 
