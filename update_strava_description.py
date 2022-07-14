@@ -8,6 +8,8 @@ from lambda_helpers.strava_client import create_strava_client_from_env
 from stravaclient.models.activity import UpdatableActivity
 from weather.report import generate_weather_report_for_activity
 
+DATABASE_FILEPATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'data_sources', 'database.pkl')
+
 
 def lambda_handler(event, context):
     message = json.loads(event['Records'][0]['Sns']['Message'])
@@ -64,7 +66,7 @@ def get_summit_report(activity_id, athlete_id, strava_client):
                                                            as_df=True)
         return report_visited_summits(lat=route_data['lat'].values,
                                       lng=route_data['lng'].values,
-                                      database_filepath='./database.pkl')
+                                      database_filepath=DATABASE_FILEPATH)
     except:
         logging.exception('Unable to generate visited summits report')
         return None
@@ -77,7 +79,3 @@ def get_weather_report(activity_data, weather_api_key):
     except:
         logging.exception('Unable to generate weather report')
         return None
-
-
-if __name__ == '__main__':
-    print(create_strava_description(['Report A', 'Report B', 'Report C']))
