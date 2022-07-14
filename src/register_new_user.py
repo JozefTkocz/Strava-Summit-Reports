@@ -1,14 +1,14 @@
 import logging
 import json
-
 from lambda_helpers.strava_client import create_strava_client_from_env
-
 from typing import Dict, Union
+
+logging.getLogger().setLevel(logging.INFO)
 
 
 def lambda_handler(event, context):
     strava_client = create_strava_client_from_env()
-    lambda_url = 'a_url'
+    lambda_url = event['headers'].get('host')
 
     authorisation_code = parse_code_from_query_string(event)
 
