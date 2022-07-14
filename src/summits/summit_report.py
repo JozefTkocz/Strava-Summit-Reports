@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Any
 
 from summits.report_configuration import ReportConfiguration
 
@@ -17,7 +17,7 @@ def generate_summit_report(summits: pd.DataFrame, config: ReportConfiguration) -
 
 
 def get_summit_classifications(summits: pd.DataFrame,
-                               classification_columns: List[str]) -> Dict[str, List[str]]:
+                               classification_columns: List[str]) -> Dict[Any, List[str]]:
     """
     Given a table of summits, return a dictionary where the keys are summit ID and the values are a list of
     corresponding applicable summit classifications
@@ -39,8 +39,8 @@ def get_summit_classifications(summits: pd.DataFrame,
     return summit_classification_codes
 
 
-def convert_classification_codes_to_names(summit_classifications: Dict[str, List[str]],
-                                          mapping: Dict[str, str]) -> Dict[str, List[str]]:
+def convert_classification_codes_to_names(summit_classifications: Dict[Any, List[str]],
+                                          mapping: Dict[str, str]) -> Dict[Any, List[str]]:
     """
     Given a dictionary of summits and their classification codes, apply the mapping to the classification codes to
     return a dictionary of summits and their classification names.
@@ -153,9 +153,9 @@ def get_summit_descriptions_by_classification(hill_report_data: pd.DataFrame,
     """
     # Make a table of Boolean flags denoting whether a summit belongs to each classification in the report
     summit_classes = pd.DataFrame(columns=config.code_mapping.values())
-    for idx, (summit_name, reported_classes) in enumerate(reported_classifications.items()):
-        summit_classes.loc[idx, :] = False
-        summit_classes.loc[idx, reported_classes] = True
+    for summit_name, reported_classes in reported_classifications.items():
+        summit_classes.loc[summit_name, :] = False
+        summit_classes.loc[summit_name, reported_classes] = True
 
     summit_descriptions = {}
     for classification in summit_classes.columns:
