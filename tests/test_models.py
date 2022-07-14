@@ -1,4 +1,4 @@
-from models.coordinates import CoordinateSet
+from src.models.coordinates import CoordinateSet
 import pytest
 import numpy as np
 

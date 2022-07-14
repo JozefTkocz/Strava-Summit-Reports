@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from typing import Dict, List, Union
 
-from summits.report_configuration import ReportConfiguration
+from src.summits.report_configuration import ReportConfiguration
 
 
 def generate_summit_report(summits: pd.DataFrame, config: ReportConfiguration) -> str:
@@ -33,7 +33,6 @@ def get_summit_classifications(summits: pd.DataFrame,
     summit_classification_codes = {}
     for summit in df.columns:
         classification_series = df[summit]
-        print(classification_series)
         classifications = classification_series.loc[classification_series].index.to_list()
         summit_classification_codes.update({summit: classifications})
 

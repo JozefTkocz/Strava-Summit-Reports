@@ -1,8 +1,8 @@
 import pandas as pd
 
-from summits.summit_report import get_summit_classifications, convert_classification_codes_to_names, \
+from src.summits.summit_report import get_summit_classifications, convert_classification_codes_to_names, \
     reduce_classification_list, generate_visited_summit_report, generate_summit_report
-from summits.report_configuration import REPORT_CONFIG, ReportConfiguration, ReportedSummit
+from src.summits.report_configuration import REPORT_CONFIG, ReportConfiguration, ReportedSummit
 
 
 def test_get_summit_classifications():

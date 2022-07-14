@@ -1,4 +1,4 @@
-from update_strava_description import create_strava_description
+from src.update_strava_description import create_strava_description
 
 
 def test_create_strava_description_all_reports_populated():

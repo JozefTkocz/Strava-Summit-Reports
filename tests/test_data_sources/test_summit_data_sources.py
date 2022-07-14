@@ -1,6 +1,6 @@
 import pandas as pd
 
-from data_sources.summits import LocalFileSummitReference
+from src.data_sources.summits import LocalFileSummitReference
 from unittest.mock import MagicMock
 
 

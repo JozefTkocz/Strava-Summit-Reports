@@ -12,7 +12,7 @@ cd ./layer_dir
 zip -r docker_layer.zip .
 
 5. Copy .zip file onto host machine. 
-	- Identify running condainer ID:
+	- Identify running container ID:
 		docker container ls
 
 	- Navigate to directory with Dockerfile on host machine, open command prompt and type:

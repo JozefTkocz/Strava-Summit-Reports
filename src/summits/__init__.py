@@ -1,11 +1,11 @@
 import numpy as np
 import os
 
-from data_sources.summits import LocalFileSummitReference
-from models.coordinates import CoordinateSet
-from summits.report_configuration import ReportConfiguration, REPORT_CONFIG
-from summits.summit_report import generate_summit_report
-from summits.visited_summits import find_visited_summits
+from src.data_sources.summits import LocalFileSummitReference
+from src.models.coordinates import CoordinateSet
+from src.summits.report_configuration import ReportConfiguration, REPORT_CONFIG
+from src.summits.summit_report import generate_summit_report
+from src.summits.visited_summits import find_visited_summits
 
 MODULE_PATH = os.path.realpath(__file__)
 

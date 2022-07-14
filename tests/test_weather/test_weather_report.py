@@ -1,14 +1,15 @@
 import json
-
 import pandas as pd
-
-from weather.report import generate_weather_report_for_activity
-
 from unittest import mock
+import os
+
+from src.weather.report import generate_weather_report_for_activity
+
+TEST_DATA_DIRECTORY = os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir, 'data')
 
 
 def mock_get_weather_data(*args, **kwargs) -> pd.DataFrame:
-    df = pd.read_csv('weather.csv')
+    df = pd.read_csv(os.path.join(TEST_DATA_DIRECTORY, 'weather.csv'))
     df['time'] = pd.to_datetime(df['time'])
     df.set_index('time', inplace=True)
     df['condition'] = df['condition'].apply(lambda x: x.replace('\'', '"'))
@@ -16,9 +17,9 @@ def mock_get_weather_data(*args, **kwargs) -> pd.DataFrame:
     return df
 
 
-@mock.patch('weather.report.get_weather_history', side_effect=mock_get_weather_data)
+@mock.patch('src.weather.report.get_weather_history', side_effect=mock_get_weather_data)
 def test_generate_weather_report_for_activity(mock_get_weather):
-    with open('activity.json', 'r') as file:
+    with open(os.path.join(TEST_DATA_DIRECTORY, 'activity.json'), 'r') as file:
         activity = json.load(file)
 
     calculated_result = generate_weather_report_for_activity(api_key='my_key', strava_activity=activity)

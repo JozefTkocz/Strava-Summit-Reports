@@ -1,9 +1,9 @@
 import pandas as pd
 import numpy as np
 
-from data_sources.summits import LocalFileSummitReference
-from summits.visited_summits import find_visited_summits
-from models.coordinates import CoordinateSet
+from src.data_sources.summits import LocalFileSummitReference
+from src.summits import find_visited_summits
+from src.models.coordinates import CoordinateSet
 
 from unittest.mock import MagicMock
 
