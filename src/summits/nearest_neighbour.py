@@ -1,7 +1,7 @@
 import numpy as np
 from typing import Union, Tuple
 
-from src.models.coordinates import CoordinateSet
+from models.coordinates import CoordinateSet
 
 EARTH_RADIUS = 6371.
 

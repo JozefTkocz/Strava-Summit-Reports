@@ -1,9 +1,9 @@
 import numpy as np
 import pandas as pd
 from typing import Union
-from src.summits.nearest_neighbour import nearest_neighbour_search
-from src.data_sources.summits import SummitReference
-from src.models.coordinates import CoordinateSet
+from summits.nearest_neighbour import nearest_neighbour_search
+from data_sources.summits import SummitReference
+from models.coordinates import CoordinateSet
 
 
 def find_visited_summits(summit_reference_data: SummitReference,

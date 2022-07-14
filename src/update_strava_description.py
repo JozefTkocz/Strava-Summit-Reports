@@ -8,6 +8,7 @@ from lambda_helpers.strava_client import create_strava_client_from_env
 from stravaclient.models.activity import UpdatableActivity
 from weather.report import generate_weather_report_for_activity
 
+logging.getLogger().setLevel(logging.INFO)
 DATABASE_FILEPATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'data_sources', 'database.pkl')
 
 

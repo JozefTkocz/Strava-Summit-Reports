@@ -6,6 +6,8 @@ from typing import Dict, Union
 import boto3
 from botocore.exceptions import ClientError
 
+logging.getLogger().setLevel(logging.INFO)
+
 
 def lambda_handler(event, context):
     # Respond immediately to the webhook subscription challenge if this endpoint is being registered with the Strava

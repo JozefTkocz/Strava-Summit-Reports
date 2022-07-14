@@ -64,8 +64,8 @@ def get_start_end_time_local(strava_activity: Dict) -> Tuple[dt.datetime, dt.dat
 
 
 def get_timezone_at_location(latitude: float, longitude: float) -> dt.tzinfo:
-    timezone_locator = tzwhere.tzwhere()
-    timezone_at_location = timezone_locator.tzNameAt(latitude=latitude, longitude=longitude)
+    timezone_locator = tzwhere.tzwhere(forceTZ=True)
+    timezone_at_location = timezone_locator.tzNameAt(latitude=latitude, longitude=longitude, forceTZ=True)
     return pytz.timezone(timezone_at_location)
 
 

@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from typing import Dict, List, Union
 
-from src.summits.report_configuration import ReportConfiguration
+from summits.report_configuration import ReportConfiguration
 
 
 def generate_summit_report(summits: pd.DataFrame, config: ReportConfiguration) -> str:
