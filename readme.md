@@ -13,7 +13,7 @@ sign-up link.
  - Navigate to the `Authorisation url` property from the returned `JSON`.  
  - You should be directed to a Strava login page. Login and Authorise the app to access your user profile
  - You should then be redirected back to the app. If registration has been successful, you should see the message 
- - `Successfully registered athlete with ID <YOUR ATHLETE ID>`
+`Successfully registered athlete with ID <YOUR ATHLETE ID>`
  - All of your Strava activities will now be automatically updated with summit and weather reports
 
 *Please note, this is a hobby project, and I am trying to keep costs low. There is currently a hard limit on the number 
