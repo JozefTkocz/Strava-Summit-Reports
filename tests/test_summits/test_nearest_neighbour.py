@@ -1,8 +1,8 @@
-from summits.nearest_neighbour import haversine_distance, EARTH_RADIUS, nearest_neighbour_search
+from src.summits.nearest_neighbour import haversine_distance, EARTH_RADIUS, nearest_neighbour_search
 import pytest
 import numpy as np
 
-from models.coordinates import CoordinateSet
+from src.models.coordinates import CoordinateSet
 
 
 @pytest.mark.parametrize("coordinate, expected_result", [((0, 0), 0.), ((0.5, 0.5), 0.), ((1.0, 1.0), 0.)])

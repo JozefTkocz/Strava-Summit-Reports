@@ -1,8 +1,32 @@
-import pandas as pd
+import os.path
 
-from summits.summit_report import get_summit_classifications, convert_classification_codes_to_names, \
+import pandas as pd
+import json
+from stravaclient import StravaClient
+
+from src.summits.summit_report import get_summit_classifications, convert_classification_codes_to_names, \
     reduce_classification_list, generate_visited_summit_report, generate_summit_report
-from summits.report_config import REPORT_CONFIG, ReportConfiguration, ReportedSummit
+from src.summits.report_configuration import REPORT_CONFIG, ReportConfiguration, ReportedSummit
+from src.update_strava_description import report_visited_summits
+
+EXAMPLE_STREAMSET_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir, 'data',
+                                      'example_streamset.json')
+DATABASE_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir, os.pardir, 'src', 'data_sources',
+                             'database.pkl')
+
+
+def test_get_summit_report():
+    with open(EXAMPLE_STREAMSET_PATH, 'r') as file:
+        streamset = json.load(file)
+
+    df = StravaClient._convert_streamset_to_pandas(streamset)
+    expected_result = \
+        ('Summits visited:\n'
+         "Munros: Carn a' Mhaim (1037.0 m), Ben Macdui [Beinn Macduibh] (1309.0 m), Cairn Gorm (1244.8 m)\n\n"
+         'Munro Tops: Stob Coire an t-Sneachda (1176.0 m)')
+
+    calculated_result = report_visited_summits(lat=df['lat'], lng=df['lng'], database_filepath=DATABASE_PATH)
+    assert calculated_result == expected_result
 
 
 def test_get_summit_classifications():
@@ -127,13 +151,13 @@ def test_generate_visited_summit_report():
                        'S': [1, 1, 1, 1, 1],
                        'Name': ["King's Seat Hill", "Tarmangie Hill", "Innerdownie", "Whitewisp Hill",
                                 "Cairnmorris Hill"],
-                       'Metres': [1, 2, 3, 4, 5]})
+                       'Metres': [1, 2, 3, 4, 5]}, index=[1, 2, 3, 4, 5])
 
-    summit_classes = {"King's Seat Hill": ['Donald'],
-                      "Tarmangie Hill": ['Donald'],
-                      "Innerdownie": ['Donald'],
-                      "Whitewisp Hill": ['Graham Top', 'Donald Top'],
-                      "Cairnmorris Hill": ['Tump']}
+    summit_classes = {1: ['Donald'],
+                      2: ['Donald'],
+                      3: ['Donald'],
+                      4: ['Graham Top', 'Donald Top'],
+                      5: ['Tump']}
     calculated_result = generate_visited_summit_report(summits_database_table=df,
                                                        visited_summit_classifications=summit_classes,
                                                        config=REPORT_CONFIG)
