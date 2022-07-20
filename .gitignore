@@ -125,3 +125,5 @@ update_activity_history_with_summits/.~lock.strava_activities_reports.csv#
 Untitled-Copy1.ipynb
 Hill Finder Proof of Concept.ipynb
 .~lock.DoBIH_v17_3.csv#
+
+*.idea/
