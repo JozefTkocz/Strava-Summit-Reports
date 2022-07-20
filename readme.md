@@ -4,7 +4,7 @@ An AWS-hosted web app that automatically edits Strava activities with a summary 
 [database of British and Irish Hills](http://www.hills-database.co.uk/downloads.html), according to their summit 
 classification, and a description of the weather during the activity, generated using [weatherapi](https://www.weatherapi.com/).
 
-### How can I Use it?
+### How Can I Use It?
 
 To register for the app: 
  - visit this the 
@@ -20,7 +20,7 @@ sign-up link.
 of registered users of 5. If you instead see the message `Unable to register athlete.`, it is likely this hard limit
 has been exceeded.*
 
-### How does it work?
+### How Does It Work?
 
 When a user registers for the app, strava generates an `authorisation_code`, which can be used to retrieve an 
 `authorisation_token` and a `refresh_token` from Strava (details regarding token exchange and refreshing expired tokens 
