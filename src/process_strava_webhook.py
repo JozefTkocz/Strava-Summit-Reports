@@ -21,6 +21,7 @@ def lambda_handler(event, context):
 
     # Otherwise parse the incoming webhook event and publish to AWS notification service for later processing
     event_body = parse_json_body(event)
+
     if not is_newly_created_activity(event_body):
         logging.info('Not a new activity, exiting early...')
         return {'statusCode': 200}
@@ -78,3 +79,7 @@ def parse_challenge_from_query_string(event: Dict) -> Union[str, None]:
     else:
         challenge = None
     return challenge
+
+
+def is_unsubscription_event(event: Dict) -> bool:
+    return False
