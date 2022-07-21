@@ -1,3 +1,5 @@
+![example workflow](https://github.com/JozefTkocz/Strava-Summit-Reports/actions/workflows/python-app.yml/badge.svg)
+
 # Strava Summit Reports
 
 An AWS-hosted web app that automatically edits Strava activities with a summary report of visited summits from the 
