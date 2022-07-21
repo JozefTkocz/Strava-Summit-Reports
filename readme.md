@@ -1,4 +1,4 @@
-![example workflow](https://github.com/JozefTkocz/Strava-Summit-Reports/actions/workflows/python-app.yml/badge.svg)
+![Build](https://github.com/JozefTkocz/Strava-Summit-Reports/actions/workflows/python-app.yml/badge.svg)
 
 # Strava Summit Reports
 
