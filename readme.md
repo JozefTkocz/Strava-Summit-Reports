@@ -9,8 +9,8 @@ classification, and a description of the weather during the activity, generated 
 ### How Can I Use It?
 
 To register for the app: 
- - visit this the 
-[user registration endpoint](https://qbyrryqldqqzco3zsfitqirqlu0xcino.lambda-url.None.on.aws/) to generate your 
+ - visit the 
+[user registration endpoint](https://qbyrryqldqqzco3zsfitqirqlu0xcino.lambda-url.eu-west-2.on.aws/) to generate your 
 sign-up link. 
  - Navigate to the `Authorisation url` property from the returned `JSON`.  
  - You should be directed to a Strava login page. Login and Authorise the app to access your user profile
