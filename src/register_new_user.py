@@ -11,7 +11,9 @@ MAX_REGISTERED_USERS = 5
 def lambda_handler(event, context):
     strava_client = create_strava_client_from_env()
 
-    if strava_client.authorisation.token_cache.total_tokens >= MAX_REGISTERED_USERS:
+    total_registered_users = strava_client.authorisation.token_cache.total_tokens
+    logging.info(f'{total_registered_users} users are currently registered.')
+    if total_registered_users >= MAX_REGISTERED_USERS:
         return {'statusCode': 400,
                 'body': json.dumps('Maximum registered users limit exceeded.')}
 
