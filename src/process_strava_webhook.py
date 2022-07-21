@@ -22,6 +22,12 @@ def lambda_handler(event, context):
     # Otherwise parse the incoming webhook event and publish to AWS notification service for later processing
     event_body = parse_json_body(event)
 
+    if is_unsubscription_event(event_body):
+        athlete_id = event_body.get('owner_id')
+        logging.info(f'Unsubscribing athlete {athlete_id}')
+        remove_athlete(athlete_id)
+        return {'statusCode': 200}
+
     if not is_newly_created_activity(event_body):
         logging.info('Not a new activity, exiting early...')
         return {'statusCode': 200}
@@ -82,4 +88,14 @@ def parse_challenge_from_query_string(event: Dict) -> Union[str, None]:
 
 
 def is_unsubscription_event(event: Dict) -> bool:
+    is_athlete = event['object_type'] == 'athlete'
+
+    if is_athlete:
+        is_authorised = event['updates']['authorized']
+        return not is_authorised
+
     return False
+
+
+def remove_athlete(athlete_id: int):
+    pass
