@@ -1,0 +1,11 @@
+{
+  "aspect_type": "update",
+  "event_time": 1611350203,
+  "object_id": 6881533,
+  "object_type": "athlete",
+  "owner_id": 6881533,
+  "subscription_id": 12345,
+  "updates": {
+    "authorized": "false"
+  }
+}

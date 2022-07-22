@@ -5,6 +5,7 @@ from typing import Dict, Union
 
 import boto3
 from botocore.exceptions import ClientError
+from lambda_helpers.strava_client import create_strava_client_from_env
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -21,6 +22,11 @@ def lambda_handler(event, context):
 
     # Otherwise parse the incoming webhook event and publish to AWS notification service for later processing
     event_body = parse_json_body(event)
+
+    if is_unsubscription_event(event_body):
+        deregister_athlete(event_body)
+        return {'statusCode': 200}
+
     if not is_newly_created_activity(event_body):
         logging.info('Not a new activity, exiting early...')
         return {'statusCode': 200}
@@ -42,6 +48,13 @@ def lambda_handler(event, context):
     return {'statusCode': 200}
 
 
+def deregister_athlete(event_body: Dict):
+    athlete_id = event_body.get('owner_id')
+    logging.info(f'Unsubscribing athlete {athlete_id}')
+    strava_client = create_strava_client_from_env()
+    strava_client.authorisation.token_cache.delete_authorisation_token(athlete_id=athlete_id)
+
+
 def create_sns_topic_from_env():
     region_name = os.environ.get('region_name')
     aws_access_key_id = os.environ.get('aws_access_key_id')
@@ -59,7 +72,6 @@ def create_sns_topic_from_env():
 def is_newly_created_activity(body: Dict) -> bool:
     object_type = body.get('object_type')
     aspect_type = body.get('aspect_type')
-    # Only publish events that are new athlete activities
     is_activity = object_type == 'activity'
     is_newly_created = aspect_type == 'create'
     return is_activity and is_newly_created
@@ -78,3 +90,12 @@ def parse_challenge_from_query_string(event: Dict) -> Union[str, None]:
     else:
         challenge = None
     return challenge
+
+
+def is_unsubscription_event(event: Dict) -> bool:
+    is_athlete = event['object_type'] == 'athlete'
+    if not is_athlete:
+        return False
+
+    is_authorised = event['updates']['authorized']
+    return is_authorised == 'false'
