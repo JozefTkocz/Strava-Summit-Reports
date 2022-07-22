@@ -94,9 +94,8 @@ def parse_challenge_from_query_string(event: Dict) -> Union[str, None]:
 
 def is_unsubscription_event(event: Dict) -> bool:
     is_athlete = event['object_type'] == 'athlete'
+    if not is_athlete:
+        return False
 
-    if is_athlete:
-        is_authorised = event['updates']['authorized']
-        return not is_authorised
-
-    return False
+    is_authorised = event['updates']['authorized']
+    return is_authorised == 'false'

@@ -6,6 +6,6 @@
   "owner_id": 6881533,
   "subscription_id": 12345,
   "updates": {
-    "authorized": false
+    "authorized": "false"
   }
 }
